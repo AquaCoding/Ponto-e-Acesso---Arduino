@@ -6,6 +6,9 @@
 uchar serNumA[5];
 uchar fifobytes;
 uchar fifoValue;
+
+String codConcat; //variável responsável por guardar o cod lido
+
 AddicoreRFID myRFID;  //Cria o Objeto
 
 //Seta os pinos
@@ -85,8 +88,31 @@ void leitura() {
 
     Serial.println();
     delay(1000);
+
+    codConcat = "" + str[0] + "" + str[1] + "" + str[2] + "" + str[3] + "" + str[4];
   }
   myRFID.AddicoreRFID_Halt(); //Command tag into hibernation
+}
+
+//Método de escrita por RFID
+void escrita() {
+  delay(2000);
+
+  int token = Serial.read();
+}
+
+//Método de leitura e verificação
+void leitura_verifica() {
+  delay(2000);
+  int cod = Serial.read();
+  leitura();
+  delay(1000);
+  if (cod == codConcat) {
+    Serial.println("Codigo verificado com sucesso!");
+  } else {
+    Serial.println("Codigos não conferem!");
+  }
+  Serial.print();
 }
 
 
