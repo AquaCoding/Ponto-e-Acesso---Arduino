@@ -32,12 +32,15 @@ void setup() {
 }
 
 void loop() {
-  //Recebe a opção passada pelo serial
-  int opcao = Serial.read();
 
-  //Verfifica opção
-  if (opcao == 1) {
-    leitura();
+  if (Serial.available() > 0) {
+    switch(Serial.read()){
+      case '1':
+        Serial.println("Passe o cartão");
+        leitura();
+        break;
+    }
+    
   }
 
 }
@@ -63,9 +66,9 @@ void leitura() {
   if (status == MI_OK) {
     Serial.println("RFID tag detected");
     Serial.print(str[0], BIN);
-    Serial.print(" , ");
+    //Serial.print(" , ");
     Serial.print(str[1], BIN);
-    Serial.println(" ");
+    //Serial.println(" ");
   }
 
   //Anti-collision, return tag serial number 4 bytes
@@ -75,21 +78,21 @@ void leitura() {
     Serial.println("O código do cartão ou tag é: ");
 
     Serial.print(str[0]);
-    Serial.print(" , ");
+    //Serial.print(" , ");
     Serial.print(str[1], BIN);
-    Serial.print(" , ");
+    //Serial.print(" , ");
     Serial.print(str[2], BIN);
-    Serial.print(" , ");
+    //Serial.print(" , ");
     Serial.print(str[3], BIN);
-    Serial.print(" , ");
+    //Serial.print(" , ");
     Serial.print(str[4], BIN);
-    Serial.print(" , ");
+    //Serial.print(" , ");
     Serial.println(checksum1, BIN);
 
     Serial.println();
     delay(1000);
 
-    codConcat = "" + str[0] + "" + str[1] + "" + str[2] + "" + str[3] + "" + str[4];
+    // codConcat = "" + str[0] + "" + str[1] + "" + str[2] + "" + str[3] + "" + str[4];
   }
   myRFID.AddicoreRFID_Halt(); //Command tag into hibernation
 }
@@ -102,18 +105,18 @@ void escrita() {
 }
 
 //Método de leitura e verificação
-void leitura_verifica() {
-  delay(2000);
-  int cod = Serial.read();
-  leitura();
-  delay(1000);
-  if (cod == codConcat) {
-    Serial.println("Codigo verificado com sucesso!");
-  } else {
-    Serial.println("Codigos não conferem!");
-  }
-  Serial.print();
-}
+//void leitura_verifica() {
+//  delay(2000);
+//  int cod = Serial.read();
+// leitura();
+//delay(1000);
+// if (cod == codConcat) {
+//   Serial.println("Codigo verificado com sucesso!");
+/// } else {
+//   Serial.println("Codigos não conferem!");
+//  }
+//  Serial.print();
+//}
 
 
 
