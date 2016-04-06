@@ -15,14 +15,17 @@ char st[20];
 
 MFRC522::MIFARE_Key key;
 
+const int buzzer = 8;
+
 void setup() {
   pinMode(pino_botao_le, INPUT);
   pinMode(pino_botao_gr, INPUT);
   Serial.begin(9600);   // Inicia a serial
   SPI.begin();      // Inicia  SPI bus
   mfrc522.PCD_Init();   // Inicia MFRC522
-  Serial.println("Aproxime o seu cartao do leitor...");
-  Serial.println();
+  //Serial.println("Aproxime o seu cartao do leitor...");
+  //Serial.println();
+  pinMode(buzzer,OUTPUT);
   //Define o número de colunas e linhas do LCD:
   lcd.begin(16, 2);
   mensageminicial();
@@ -33,6 +36,45 @@ void setup() {
 
 void loop() {
   leitura();
+  delay(1000);
+  
+}
+
+void leitura() {
+  // Look for new cards
+  if ( ! mfrc522.PICC_IsNewCardPresent()) {
+    return;
+  }
+  // Select one of the cards
+  if ( ! mfrc522.PICC_ReadCardSerial()) {
+    return;
+  }
+  //Mostra UID na serial
+  //Serial.print("UID da tag :");
+  String conteudo = "";
+  byte letra;
+  for (byte i = 0; i < mfrc522.uid.size; i++) {
+    //Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+    //Serial.print(mfrc522.uid.uidByte[i], HEX);
+    conteudo.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+    conteudo.concat(String(mfrc522.uid.uidByte[i], HEX));
+  }
+  Serial.println(conteudo);
+  //tone(buzzer,100);   
+  digitalWrite(buzzer, HIGH);
+  delay(500);
+   
+  //Desligando o buzzer.
+  noTone(buzzer);
+  lcd.clear();
+  lcd.print("Ponto Registrado!");
+}
+
+void mensageminicial() {
+  lcd.clear();
+  lcd.print(" Aproxime o seu");
+  lcd.setCursor(0, 1);
+  lcd.print("cartao do leitor");
 }
 
 
@@ -68,7 +110,7 @@ void escrita() {
 
 void mensagem_inicial_cartao()
 {
-  Serial.println("Aproxime o seu cartao do leitor...");
+  //Serial.println("Aproxime o seu cartao do leitor...");
   lcd.clear();
   lcd.print(" Aproxime o seu");
   lcd.setCursor(0, 1);
@@ -77,6 +119,7 @@ void mensagem_inicial_cartao()
 
 void modo_leitura()
 {
+  lcd.print("Modo leitura, aproxime o cartão");
   mensagem_inicial_cartao();
   //Aguarda cartao
   while ( ! mfrc522.PICC_IsNewCardPresent())
@@ -88,17 +131,17 @@ void modo_leitura()
     return;
   }
   //Mostra UID na serial
-  Serial.print("UID da tag : ");
+  //Serial.print("UID da tag : ");
   String conteudo = "";
   byte letra;
   for (byte i = 0; i < mfrc522.uid.size; i++)
   {
-    Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-    Serial.print(mfrc522.uid.uidByte[i], HEX);
+    //Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+    //Serial.print(mfrc522.uid.uidByte[i], HEX);
     conteudo.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
     conteudo.concat(String(mfrc522.uid.uidByte[i], HEX));
   }
-  Serial.println();
+  //Serial.println();
 
   //Obtem os dados do setor 1, bloco 4 = Nome
   byte sector         = 1;
@@ -112,24 +155,26 @@ void modo_leitura()
   status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A,
                                     trailerBlock, &key, &(mfrc522.uid));
   if (status != MFRC522::STATUS_OK) {
-    Serial.print(F("PCD_Authenticate() failed: "));
-    Serial.println(mfrc522.GetStatusCodeName(status));
+    //Serial.print(F("PCD_Authenticate() failed: "));
+    //Serial.println(mfrc522.GetStatusCodeName(status));
+    lcd.print("Problemas na leitura do cartão");
     return;
   }
   status = mfrc522.MIFARE_Read(blockAddr, buffer, &size);
   if (status != MFRC522::STATUS_OK) {
-    Serial.print(F("MIFARE_Read() failed: "));
-    Serial.println(mfrc522.GetStatusCodeName(status));
+    //Serial.print(F("MIFARE_Read() failed: "));
+    //Serial.println(mfrc522.GetStatusCodeName(status));
+    lcd.print("Problemas na leitura do cartão");
   }
   //Mostra os dados do nome no Serial Monitor e LCD
   lcd.clear();
   lcd.setCursor(0, 0);
   for (byte i = 1; i < 16; i++)
   {
-    Serial.print(char(buffer[i]));
+    //Serial.print(char(buffer[i]));
     lcd.write(char(buffer[i]));
   }
-  Serial.println();
+  //Serial.println();
 
   //Obtem os dados do setor 0, bloco 1 = Sobrenome
   sector         = 0;
@@ -141,24 +186,26 @@ void modo_leitura()
                                     trailerBlock, &key, &(mfrc522.uid));
   if (status != MFRC522::STATUS_OK)
   {
-    Serial.print(F("PCD_Authenticate() failed: "));
-    Serial.println(mfrc522.GetStatusCodeName(status));
+    //Serial.print(F("PCD_Authenticate() failed: "));
+    //Serial.println(mfrc522.GetStatusCodeName(status));
+    lcd.print("Problemas na leitura do cartão");
     return;
   }
   status = mfrc522.MIFARE_Read(blockAddr, buffer, &size);
   if (status != MFRC522::STATUS_OK)
   {
-    Serial.print(F("MIFARE_Read() failed: "));
-    Serial.println(mfrc522.GetStatusCodeName(status));
+    //Serial.print(F("MIFARE_Read() failed: "));
+    //Serial.println(mfrc522.GetStatusCodeName(status));
+    lcd.print("Problemas na leitura do cartão");
   }
   //Mostra os dados do sobrenome no Serial Monitor e LCD
   lcd.setCursor(0, 1);
   for (byte i = 0; i < 16; i++)
   {
-    Serial.print(char(buffer[i]));
+    //Serial.print(char(buffer[i]));
     lcd.write(char(buffer[i]));
   }
-  Serial.println();
+  //Serial.println();
 
   // Halt PICC
   mfrc522.PICC_HaltA();
@@ -194,7 +241,7 @@ void modo_gravacao()
   MFRC522::StatusCode status;
   byte len;
 
-  Serial.setTimeout(20000L) ;
+  Serial.setTimeout(20000L);
   Serial.println(F("Digite o sobrenome,em seguida o caractere #"));
   lcd.clear();
   lcd.print("Digite o sobreno");
@@ -293,33 +340,4 @@ void modo_gravacao()
   mfrc522.PCD_StopCrypto1();  // Stop encryption on PCD
   delay(5000);
   mensageminicial();
-}
-
-void leitura() {
-  // Look for new cards
-  if ( ! mfrc522.PICC_IsNewCardPresent()) {
-    return;
-  }
-  // Select one of the cards
-  if ( ! mfrc522.PICC_ReadCardSerial()) {
-    return;
-  }
-  //Mostra UID na serial
-  Serial.print("UID da tag :");
-  String conteudo = "";
-  byte letra;
-  for (byte i = 0; i < mfrc522.uid.size; i++) {
-    Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-    Serial.print(mfrc522.uid.uidByte[i], HEX);
-    conteudo.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
-    conteudo.concat(String(mfrc522.uid.uidByte[i], HEX));
-  }
-  Serial.println();
-}
-
-void mensageminicial() {
-  lcd.clear();
-  lcd.print(" Aproxime o seu");
-  lcd.setCursor(0, 1);
-  lcd.print("cartao do leitor");
 }
