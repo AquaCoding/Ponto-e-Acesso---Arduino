@@ -60,14 +60,17 @@ void leitura() {
     conteudo.concat(String(mfrc522.uid.uidByte[i], HEX));
   }
   Serial.println(conteudo);
+  delay(1000);
+  lcd.clear();
+  lcd.setCursor(0, 1);
+  lcd.print(Serial.readString());
+  
   //tone(buzzer,100);   
   digitalWrite(buzzer, HIGH);
   delay(500);
    
   //Desligando o buzzer.
   noTone(buzzer);
-  lcd.clear();
-  lcd.print("Ponto Registrado!");
 }
 
 void mensageminicial() {
