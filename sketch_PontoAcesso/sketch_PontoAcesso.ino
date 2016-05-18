@@ -18,6 +18,8 @@ MFRC522::MIFARE_Key key;
 const int buzzer = 8;
 
 void setup() {
+  pinMode(8, OUTPUT);
+  digitalWrite (8, LOW);
   pinMode(pino_botao_le, INPUT);
   pinMode(pino_botao_gr, INPUT);
   Serial.begin(9600);   // Inicia a serial
@@ -65,12 +67,14 @@ void leitura() {
   lcd.setCursor(0, 1);
   lcd.print(Serial.readString());
   
-  //tone(buzzer,100);   
+  //tone(buzzer,100);
   digitalWrite(buzzer, HIGH);
+  digitalWrite (8, HIGH);
   delay(500);
    
-  //Desligando o buzzer.
+  //Desligando o buzzer
   noTone(buzzer);
+  digitalWrite (8, LOW);
 }
 
 void mensageminicial() {
