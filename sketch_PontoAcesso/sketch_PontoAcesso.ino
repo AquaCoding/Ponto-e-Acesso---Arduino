@@ -14,6 +14,8 @@ const int buzzer_led = 8;
 char st[20];
 MFRC522::MIFARE_Key key;
 
+String reportString, codigo;
+
 void setup() {
   //Seta led e buzzer
   pinMode(buzzer_led,OUTPUT);
@@ -37,8 +39,22 @@ void setup() {
 }
 
 void loop() {
+
   leitura();
   delay(1000);  
+  
+  reportString = Serial.readString();
+  codigo = reportString.charAt(1);
+
+  switch (codigo) {
+    case 1:
+    
+    break;
+
+    case 2:
+
+    break;    
+  }
 }
 
 void leitura() {
