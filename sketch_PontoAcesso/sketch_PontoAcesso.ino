@@ -46,15 +46,7 @@ void loop() {
   reportString = Serial.readString();
   codigo = reportString.charAt(1);
 
-  switch (codigo) {
-    case 1:
-    
-    break;
-
-    case 2:
-
-    break;    
-  }
+  
 }
 
 void leitura() {
@@ -98,7 +90,6 @@ void escrita() {
     lcd.print("Modo gravacao");
     lcd.setCursor(3, 1);
     lcd.print("selecionado");
-    while (digitalRead(pino_botao_gr) == 1) {}
     delay(3000);
     modo_gravacao();
 }
