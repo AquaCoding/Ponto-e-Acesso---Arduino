@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <MFRC522.h>
 #include <LiquidCrystal.h>
+#include <DS1307.h>
 
 //Pinos
 #define SS_PIN 10
@@ -9,6 +10,7 @@
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 LiquidCrystal lcd(6, 7, 5, 4, 3, 2);
 const int buzzer_led = 8;
+DS1307 rtc(A4, A5);
 
 //Variáveis
 char st[20];
@@ -29,17 +31,32 @@ void setup() {
 
   // Inicia MFRC522
   mfrc522.PCD_Init();
-  
-  
+
+  //Aciona o relogio
+  rtc.halt(false);
+    
   //Define o número de colunas e linhas do LCD:
   lcd.begin(16, 2);
 
   //Prepara chave - padrao de fabrica = FFFFFFFFFFFFh
   for (byte i = 0; i < 6; i++) key.keyByte[i] = 0xFF;
+
+   //As linhas abaixo setam a data e hora do modulo
+  //e podem ser comentada apos a primeira utilizacao
+  rtc.setDOW(FRIDAY);         //Define o dia da semana
+  rtc.setTime(20, 37, 0);    //Define o horario
+  rtc.setDate(6, 6, 2014);  //Define o dia, mes e ano
+   
+  //Definicoes do pino SQW/Out
+  rtc.setSQWRate(SQW_RATE_1);
+  rtc.enableSQW(true);
+  
 }
 
 void loop() {
-
+  
+  mostrarHora();
+  
   leitura();
   delay(1000);  
   
@@ -82,6 +99,17 @@ void leitura() {
    
   //Desligando o buzzer e led
   digitalWrite (buzzer_led, LOW);
+}
+
+
+void mostrarHora(){
+  lcd.setCursor(0,0);
+  lcd.print(rtc.getTimeStr());
+  
+  lcd.setCursor(0,1);
+  lcd.print(rtc.getDateStr(FORMAT_SHORT));
+  lcd.print(" ");
+  lcd.println(rtc.getDOWStr(FORMAT_SHORT));
 }
 
 void escrita() {
