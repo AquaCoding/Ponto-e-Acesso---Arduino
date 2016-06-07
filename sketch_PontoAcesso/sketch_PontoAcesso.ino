@@ -43,9 +43,8 @@ void setup() {
 
    //As linhas abaixo setam a data e hora do modulo
   //e podem ser comentada apos a primeira utilizacao
-  rtc.setDOW(FRIDAY);         //Define o dia da semana
-  rtc.setTime(20, 37, 0);    //Define o horario
-  rtc.setDate(6, 6, 2014);  //Define o dia, mes e ano
+  rtc.setTime(12, 12, 0);    //Define o horario
+  rtc.setDate(8, 6, 2016);  //Define o dia, mes e ano
    
   //Definicoes do pino SQW/Out
   rtc.setSQWRate(SQW_RATE_1);
@@ -89,7 +88,9 @@ void leitura() {
   lcd.clear();
   lcd.setCursor(0, 1);
   lcd.print(Serial.readString());
-
+  
+  lcd.setCursor(0, 1);
+ 
   delay(1000);
   
   lcd.clear();
@@ -109,8 +110,7 @@ void mostrarHora(){
   lcd.setCursor(0,1);
   lcd.print(rtc.getDateStr(FORMAT_SHORT));
   lcd.print(" ");
-  lcd.println(rtc.getDOWStr(FORMAT_SHORT));
-}
+  }
 
 void escrita() {
     lcd.clear();
