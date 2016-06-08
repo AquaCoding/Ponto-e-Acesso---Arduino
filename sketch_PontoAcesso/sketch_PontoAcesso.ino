@@ -16,7 +16,7 @@ DS1307 rtc(A4, A5);
 char st[20];
 MFRC522::MIFARE_Key key;
 
-int reportString;
+int codMessage;
 
 void setup() {
   //Seta led e buzzer
@@ -52,8 +52,7 @@ void setup() {
   
 }
 
-void loop() {
-  
+void loop() { 
   mostrarHora();
   
   leitura();
@@ -62,8 +61,8 @@ void loop() {
 }
 
 void mensagem() {
-  reportString = Serial.parseInt();
-  switch(reportString) {
+  codMessage = Serial.parseInt();
+  switch(codMessage) {
     case 1:
       lcd.clear();
       lcd.setCursor(0, 0);
