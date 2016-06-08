@@ -16,7 +16,7 @@ DS1307 rtc(A4, A5);
 char st[20];
 MFRC522::MIFARE_Key key;
 
-String reportString, codigo;
+int reportString;
 
 void setup() {
   //Seta led e buzzer
@@ -43,8 +43,8 @@ void setup() {
 
    //As linhas abaixo setam a data e hora do modulo
   //e podem ser comentada apos a primeira utilizacao
-  rtc.setTime(12, 12, 0);    //Define o horario
-  rtc.setDate(8, 6, 2016);  //Define o dia, mes e ano
+  //rtc.setTime(12, 12, 0);    //Define o horario
+  //rtc.setDate(8, 6, 2016);  //Define o dia, mes e ano
    
   //Definicoes do pino SQW/Out
   rtc.setSQWRate(SQW_RATE_1);
@@ -57,12 +57,53 @@ void loop() {
   mostrarHora();
   
   leitura();
-  delay(1000);  
-  
-  reportString = Serial.readString();
-  codigo = reportString.charAt(1);
+  delay(1000);   
+  mensagem();
+}
 
-  
+void mensagem() {
+  reportString = Serial.parseInt();
+  switch(reportString) {
+    case 1:
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Ponto Registrado");    
+      delay(3000);                         
+      lcd.clear();
+    break;
+    case 2:
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Acesso Permitido");                             
+      delay(3000);
+      lcd.clear();
+    break;
+    case 3:
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Acesso Negado");  
+      delay(3000);                           
+      lcd.clear();
+    break;
+    case 4:
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Funcionario");     
+      lcd.setCursor(0, 1);
+      lcd.print("Suspenso");     
+      delay(3000);                        
+      lcd.clear();
+    break;
+    case 5:
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Erro"); 
+      lcd.setCursor(0, 1);
+      lcd.print("contate o suporte");     
+      delay(3000);                            
+      lcd.clear();
+    break;
+  }
 }
 
 void leitura() {
@@ -78,22 +119,12 @@ void leitura() {
   for (byte i = 0; i < mfrc522.uid.size; i++) {
     conteudo.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
     conteudo.concat(String(mfrc522.uid.uidByte[i], HEX));
-  }
+  }  
 
   //Printa na serial o número do cartão
   Serial.println(conteudo);
-  
-  delay(1000);
-  
-  lcd.clear();
-  lcd.setCursor(0, 1);
-  lcd.print(Serial.readString());
-  
-  lcd.setCursor(0, 1);
- 
-  delay(1000);
-  
-  lcd.clear();
+
+  delay(2000);
   
   digitalWrite(buzzer_led, HIGH);
   delay(500);
