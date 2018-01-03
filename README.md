@@ -1,6 +1,6 @@
 # **DESCRIÇÃO** #
 
-Este projeto foi desenvolvido implementa em Java para um controle de acesso e ponto empresarial. Utilizando um Arduino para leitura e 
+Este projeto foi desenvolvido em Java para controle de acesso e ponto empresarial. Utilizando um Arduino para leitura e 
 escrita de cartões com tag RFID e o *framework* JSSC 2.7.0 para comunicação *Java Serial* via USB. Desenvolvido utilizando a metodologia
 SCRUM como uma atividade da matéria de Projeto Integrado 1 do IFSP Campus Caraguatatuba. A documentação do projeto e a lista de componentes utilizados no 
 Arduino pode ser encontrada
